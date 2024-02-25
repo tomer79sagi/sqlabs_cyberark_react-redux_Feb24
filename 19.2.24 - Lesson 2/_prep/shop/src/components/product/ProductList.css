@@ -1,0 +1,26 @@
+.main {
+    width: 700px;
+    padding-top: 25px;
+    display: flex;
+}
+
+.mainPanel {
+    width: 60%;
+}
+
+.sidePanel {
+    width: 40%;
+    display: inline-block;
+}
+
+.flex div:nth-child(1) {
+    flex: 1.25;
+}
+
+.flex div:nth-child(2) {
+    flex: 1;
+}
+
+.flex div:nth-child(3) {
+    flex: 1;
+}
