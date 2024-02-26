@@ -1,39 +1,37 @@
-import React from 'react'
-import { useEffect } from 'react';
+import React, {useEffect} from 'react';
 import useProductForm from '../../hooks/useProductForm';
+import Product from '../../models/Product';
+import useApi from '../../hooks/useApi';
 
-const ProductEdit = (props) => {
-    const {product, setProduct, errors, handleChange, handleSubmit} = useProductForm(props.product, props.onUpdatedProduct);
+const ProductNewValidations = ( { onCreatedProduct } ) => {
+    const {product, errors, handleChange, handleSubmit} = useProductForm(new Product(), onCreatedProduct);
+    const {data, loading, error, createOne} = useApi('https://crudapi.co.uk/api/v1/products');
 
-    const handleUpdateSubmit = (e) => {
+    const handleNewSubmit = (e) => {
         if (handleSubmit(e)) { // validates
-            const productObj = {
-                id: product.id,
-                name: product.name,
-                price: product.price,
-                _uuid: props.product._uuid
+            const post = async () => {
+                const productObj = [{
+                        id: product.id,
+                        name: product.name,
+                        price: product.price
+                    }];
+                await createOne(productObj);
             };
 
-            props.onUpdatedProduct(productObj);
+            post();
         }
     }
 
     useEffect(() => {
-        setProduct(props.product);
-    }, [props.product, setProduct]);
+        if (data && !loading && !error) {
+            onCreatedProduct(data.items[0]);
+        }
+    }, [data, loading, error, onCreatedProduct]);
 
     return (
         <div>
             <h3>Product New - Validations</h3>
-            <form onSubmit={handleUpdateSubmit}>
-
-                <input 
-                    id="_uuid"
-                    name="_uuid"
-                    type="hidden"
-                    value={product._uuid ? product._uuid : -1}
-                />
-
+            <form onSubmit={(e) => handleNewSubmit(e)}>
                 <table>
                     <tbody>
                         <tr>
@@ -45,7 +43,6 @@ const ProductEdit = (props) => {
                                     id="id"
                                     name="id"
                                     type="text"
-                                    value={product.id ? product.id : -1}
                                     onChange={handleChange}
                                 />
                             </td>
@@ -59,7 +56,6 @@ const ProductEdit = (props) => {
                                     id="name"
                                     name="name"
                                     type="text"
-                                    value={product.name ? product.name : ''}
                                     onChange={handleChange}
                                 />
                                 { errors['name'] && <div style={ {color: 'red'} }>{ errors['name'] }</div> }
@@ -74,7 +70,6 @@ const ProductEdit = (props) => {
                                     id="price"
                                     name="price"
                                     type="text"
-                                    value={product.price ? product.price : 0}
                                     onChange={handleChange}
                                 />
                                 { errors['price'] && <div style={ {color: 'red'} }>{ errors['price'] }</div> }
@@ -92,4 +87,4 @@ const ProductEdit = (props) => {
     )
 }
 
-export default ProductEdit
+export default ProductNewValidations

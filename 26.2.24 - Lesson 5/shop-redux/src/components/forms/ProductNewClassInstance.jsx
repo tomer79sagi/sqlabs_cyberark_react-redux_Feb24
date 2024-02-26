@@ -1,39 +1,27 @@
-import React from 'react'
-import { useEffect } from 'react';
-import useProductForm from '../../hooks/useProductForm';
+import React from 'react';
+import Product from '../../models/Product';
+import { useState } from 'react';
 
-const ProductEdit = (props) => {
-    const {product, setProduct, errors, handleChange, handleSubmit} = useProductForm(props.product, props.onUpdatedProduct);
+const ProductNewClassInstance = () => {
+    const [product, setProduct] = useState(new Product());
 
-    const handleUpdateSubmit = (e) => {
-        if (handleSubmit(e)) { // validates
-            const productObj = {
-                id: product.id,
-                name: product.name,
-                price: product.price,
-                _uuid: props.product._uuid
-            };
+    const handleChange = (e) => {
+        const {name, value} = e.target;
+        const updatedProduct = new Product(product.id, product.name, product.price);
 
-            props.onUpdatedProduct(productObj);
-        }
+        updatedProduct.updateField(name, value);
+        setProduct(updatedProduct);
     }
 
-    useEffect(() => {
-        setProduct(props.product);
-    }, [props.product, setProduct]);
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        console.log('Form submitted with name:', product);
+    }
 
     return (
         <div>
-            <h3>Product New - Validations</h3>
-            <form onSubmit={handleUpdateSubmit}>
-
-                <input 
-                    id="_uuid"
-                    name="_uuid"
-                    type="hidden"
-                    value={product._uuid ? product._uuid : -1}
-                />
-
+            <h3>Product New - Class Instance</h3>
+            <form onSubmit={handleSubmit}>
                 <table>
                     <tbody>
                         <tr>
@@ -45,7 +33,6 @@ const ProductEdit = (props) => {
                                     id="id"
                                     name="id"
                                     type="text"
-                                    value={product.id ? product.id : -1}
                                     onChange={handleChange}
                                 />
                             </td>
@@ -59,10 +46,8 @@ const ProductEdit = (props) => {
                                     id="name"
                                     name="name"
                                     type="text"
-                                    value={product.name ? product.name : ''}
                                     onChange={handleChange}
                                 />
-                                { errors['name'] && <div style={ {color: 'red'} }>{ errors['name'] }</div> }
                             </td>
                         </tr>
                         <tr>
@@ -74,10 +59,8 @@ const ProductEdit = (props) => {
                                     id="price"
                                     name="price"
                                     type="text"
-                                    value={product.price ? product.price : 0}
                                     onChange={handleChange}
                                 />
-                                { errors['price'] && <div style={ {color: 'red'} }>{ errors['price'] }</div> }
                             </td>
                         </tr>
                         <tr>
@@ -92,4 +75,4 @@ const ProductEdit = (props) => {
     )
 }
 
-export default ProductEdit
+export default ProductNewClassInstance
